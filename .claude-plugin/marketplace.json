@@ -1,0 +1,17 @@
+{
+  "name": "brainsparker",
+  "description": "Skills from Brian Sparker's How I Build collection.",
+  "owner": {
+    "name": "Brian Sparker",
+    "url": "https://github.com/brainsparker"
+  },
+  "plugins": [
+    {
+      "name": "brainsparker-skills",
+      "source": "./",
+      "description": "PM skills for product builders: find the bold claim, review a PR against it, and scaffold a new CLI repo.",
+      "category": "productivity",
+      "tags": ["product-management", "positioning", "gtm", "code-review"]
+    }
+  ]
+}
