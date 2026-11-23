@@ -1,5 +1,14 @@
 {
   "name": "brainsparker-skills",
+  "description": "PM skills for product builders: find the bold claim, review a PR against it, and scaffold a new CLI repo.",
+  "author": {
+    "name": "Brian Sparker",
+    "url": "https://github.com/brainsparker"
+  },
+  "homepage": "https://github.com/brainsparker/skills",
+  "repository": "https://github.com/brainsparker/skills",
+  "license": "MIT",
+  "keywords": ["product-management", "positioning", "gtm", "code-review", "scaffolding"],
   "skills": [
     "./skills/bold-claim",
     "./skills/claim-review",

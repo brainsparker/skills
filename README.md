@@ -16,29 +16,60 @@ More on the way — launch narratives, pricing positioning, customer-research sy
 
 ## Install
 
-### As a Claude Code plugin (all skills)
+### Any agent: Claude Code, Codex, Cursor, Copilot, Gemini CLI and others
 
-Clone the repo into your Claude Code plugins directory:
+These are standard [Agent Skills](https://agentskills.io), so the [`skills` CLI](https://github.com/vercel-labs/skills) can install them into whichever agents you use. Run it from your project root:
 
 ```bash
-git clone https://github.com/brainsparker/skills.git ~/.claude/plugins/brainsparker-skills
+npx skills add brainsparker/skills
 ```
 
-Claude Code reads [`.claude-plugin/plugin.json`](./.claude-plugin/plugin.json) and registers every skill listed there on next launch.
+It asks which skills and which agents. To skip the prompts, name them:
 
-### A single skill, globally
+```bash
+npx skills add brainsparker/skills --skill bold-claim -a claude-code codex cursor -y
+```
+
+Add `-g` to install for every project instead of the current one.
+
+With the [GitHub CLI](https://cli.github.com/manual/gh_skill_install):
+
+```bash
+gh skill install brainsparker/skills --all
+```
+
+### Claude Code plugin (all skills, with updates)
+
+In a Claude Code session:
+
+```text
+/plugin install brainsparker-skills --marketplace brainsparker/skills
+```
+
+Or from your shell:
+
+```bash
+claude plugin install brainsparker-skills --marketplace brainsparker/skills
+```
+
+Both add this repo as a marketplace and install the plugin from it. On Claude Code older than 2.1.275, do it in two steps: `/plugin marketplace add brainsparker/skills`, then `/plugin install brainsparker-skills@brainsparker`. Installed this way, the skills are namespaced, for example `/brainsparker-skills:bold-claim`.
+
+### By hand
+
+A skill is one folder. Copy it to where your agent looks:
+
+| Agent | Project | Personal |
+| --- | --- | --- |
+| Claude Code | `.claude/skills/` | `~/.claude/skills/` |
+| Codex | `.agents/skills/` | `~/.agents/skills/` |
+| Cursor | `.agents/skills/` | `~/.cursor/skills/` |
+| GitHub Copilot | `.agents/skills/` | `~/.copilot/skills/` |
+| Gemini CLI | `.agents/skills/` | `~/.gemini/skills/` |
 
 ```bash
 git clone https://github.com/brainsparker/skills.git /tmp/brainsparker-skills
+mkdir -p ~/.claude/skills
 cp -R /tmp/brainsparker-skills/skills/bold-claim ~/.claude/skills/
-```
-
-### A single skill, project-scoped
-
-```bash
-mkdir -p .claude/skills/bold-claim
-curl -o .claude/skills/bold-claim/SKILL.md \
-  https://raw.githubusercontent.com/brainsparker/skills/main/skills/bold-claim/SKILL.md
 ```
 
 ### Claude.ai
@@ -49,7 +80,8 @@ Upload the relevant `SKILL.md` to a Project. The skill activates whenever the co
 
 ```
 .claude-plugin/
-  plugin.json          # registers every skill in this repo
+  plugin.json          # the Claude Code plugin: lists every skill in this repo
+  marketplace.json     # lets Claude Code install that plugin straight from this repo
 skills/
   bold-claim/
     SKILL.md
@@ -57,9 +89,28 @@ skills/
     SKILL.md
   quickstart/
     SKILL.md
+scripts/
+  validate.mjs         # checks every skill and both manifests
+  validate.test.mjs
 ```
 
 Each skill lives in its own folder under `skills/`.
+
+## Adding or editing a skill
+
+Run the check before you push. It needs Node 20 or later and nothing else:
+
+```bash
+node scripts/validate.mjs
+```
+
+It fails when a skill would not install everywhere:
+
+- `SKILL.md` breaks the [Agent Skills spec](https://agentskills.io/specification): name not matching its folder, description over 1,024 characters, a frontmatter field outside the six the spec allows.
+- The frontmatter is YAML that only lenient parsers accept. The common case is a colon followed by a space inside an unquoted description. Claude Code reads it, but strict installers skip the skill without failing the install.
+- A skill folder is missing from `plugin.json` or from this README, or `marketplace.json` no longer matches `plugin.json`.
+
+The check has its own tests: `node --test`.
 
 ## License
 

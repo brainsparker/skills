@@ -1,0 +1,27 @@
+# Runs the skill check on every push and pull request.
+#
+# This file is parked here because the bot that opened the PR cannot write to
+# .github/workflows/. To turn it on:
+#
+#   mkdir -p .github/workflows && git mv docs/workflows/validate.yml .github/workflows/validate.yml
+#
+name: validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node scripts/validate.mjs
+      - run: node --test
